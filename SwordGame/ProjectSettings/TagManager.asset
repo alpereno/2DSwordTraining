@@ -41,3 +41,12 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: PlayerLayer
+    uniqueID: 935234901
+    locked: 0
+  - name: SwordLayer
+    uniqueID: 4072588657
+    locked: 0
+  - name: PlayerHandLayer
+    uniqueID: 253478089
+    locked: 0
