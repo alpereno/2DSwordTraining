@@ -4,17 +4,23 @@ using UnityEngine;
 
 public class Snapper : MonoBehaviour
 {
-    public Transform snapSlotTransform;
-    public float placementTime = 1f;
-    private bool moving;
-    public bool snapped;
-    Camera viewCam;
-    private float startPosX;
-    private float startPosY;
+    // The codes here the solution of the given task
+
+    Camera viewCam;                 // To convert from screen to World point
+    SnapSlot snapSlot;
+    Transform snapSlotTransform;
+
+    [SerializeField] private float placementTime = .28f;    // placement time(sec) when it enters within a certain distance 
+    [SerializeField] private bool snapped;
+    bool moving;
+    
+    float startPosX;
+    float startPosY;
 
     private void Start()
     {
-        snapSlotTransform = FindObjectOfType<SnapSlot>().transform;
+        snapSlot = FindObjectOfType<SnapSlot>();
+        snapSlotTransform = snapSlot.transform;                
         viewCam = Camera.main;
     }
 
@@ -27,8 +33,8 @@ public class Snapper : MonoBehaviour
                 Vector3 mousePos = Input.mousePosition;
                 mousePos = viewCam.ScreenToWorldPoint(mousePos);
                 // dragging
-                // baslangic vectorlerini cikarmazsan her tikladiginda kilicin ortasi hep mouse pos'a isinlaniyor
-                // koddan anlasilacagi uzere kilicin transform.position'u mousenin oldugu yer oluyor
+                // if I don't substract the start positions, the middle of the sword always teleports to mouse positions every time
+                // the position of the sword you hold, becomes the position of the mouse (you can hold anywhere of the sword)
                 transform.position = new Vector3(mousePos.x - startPosX, mousePos.y - startPosY, transform.position.z);
             }
         }
@@ -36,6 +42,7 @@ public class Snapper : MonoBehaviour
 
     private void OnMouseDown()
     {
+        // if not snapped, registers the starting position and starts the drag process
         if (!snapped)
         {
             if (Input.GetMouseButtonDown(0))
@@ -46,7 +53,6 @@ public class Snapper : MonoBehaviour
                 startPosX = mousePos.x - transform.position.x;
                 startPosY = mousePos.y - transform.position.y;
                 moving = true;
-
             }
         }
     }
@@ -56,20 +62,23 @@ public class Snapper : MonoBehaviour
         if (!snapped)
         {
             moving = false;
-            // makin square 0.6 unit = .6 * .6 = .36
+            // I've used to Square not SquareRoot because square root operation is fairly expensive
+            // We don't need the actual distance
+
+            // 0.75 unit = .75 * .75 = .5625
             if (Vector3.SqrMagnitude(transform.position - snapSlotTransform.position) < .5625f)
             {
-                print(Vector3.SqrMagnitude(transform.position - snapSlotTransform.position));
-                // make these with coroutines (transform and rotation)
-                //transform.position = snapSlotTransform.position;
-                //transform.rotation = snapSlotTransform.rotation;
-                StartCoroutine(AnimateSwordPosition());
-                transform.parent = snapSlotTransform;
-                snapped = true;
+                StartCoroutine(AnimateSwordPosition());     // To make the action smooth. it comes slowly to hand (duration can be changed)
+                transform.parent = snapSlotTransform;       // This game object becomes child
+                snapped = true;                             // To disable relocation
+
+                snapSlot.SwordSnap(gameObject); ;
             }
         }
     }
 
+    // the sword slowly comes into the hand and turns
+    // placement time can changeable(sec) (high values slow down the process)   if you make 1 to "placementTime" it will take 1 sec
     IEnumerator AnimateSwordPosition()
     {
         float placementSpeed = 1f / placementTime;
@@ -84,7 +93,5 @@ public class Snapper : MonoBehaviour
             transform.rotation = Quaternion.Lerp(initialRotation, snapSlotTransform.rotation, percent);
             yield return null;
         }
-        //transform.position = snapSlotTransform.position;
-        //transform.rotation = snapSlotTransform.rotation;
     }
 }
