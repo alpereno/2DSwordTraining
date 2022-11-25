@@ -29,7 +29,7 @@ public class Player : MonoBehaviour
     private void Update()
     {
         MoveInput();
-        AttackInput();
+        AttackInput();        
     }
 
     void MoveInput()

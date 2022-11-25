@@ -68,7 +68,7 @@ public class Snapper : MonoBehaviour
             // 0.75 unit = .75 * .75 = .5625
             if (Vector3.SqrMagnitude(transform.position - snapSlotTransform.position) < .5625f)
             {
-                StartCoroutine(AnimateSwordPosition());     // To make the action smooth. it comes slowly to hand (duration can be changed)
+                StartCoroutine(AnimateSwordPosition());     // To make the action smooth. It comes slowly to hand (duration can be changed)
                 transform.parent = snapSlotTransform;       // This game object becomes child
                 snapped = true;                             // To disable relocation
 
