@@ -15,8 +15,7 @@ public class Sword : MonoBehaviour
     {
         Collider2D[] hitObjects = Physics2D.OverlapCircleAll(attackPointTransform.position, attackRange, hittableObjectMask);
         foreach (Collider2D hitCollider in hitObjects)
-        {
-            print("damage has been applied = " + hitCollider.name);
+        {            
             IDamageable damageableObject = hitCollider.GetComponent<IDamageable>();
             if (damageableObject != null)
             {
