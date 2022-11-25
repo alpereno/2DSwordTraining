@@ -2,14 +2,24 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+[RequireComponent (typeof (Rigidbody2D))]
 public class PlayerController : MonoBehaviour
 {
-    [SerializeField] private float speed = 3.5f;
+    Rigidbody2D playerRb;
+    float velocity;    
 
-    private void Update()
+    private void Start()
     {
-        float inputX = Input.GetAxisRaw("Horizontal");
-        float velocity = inputX * speed;
-        transform.Translate(Vector3.right * velocity * Time.deltaTime);
+        playerRb = GetComponent<Rigidbody2D>();
+    }
+
+    private void FixedUpdate()
+    {
+        playerRb.MovePosition(playerRb.position + Vector2.right * velocity * Time.fixedDeltaTime);        
+    }
+
+    public void SetVelocity(float _velocity)
+    {
+        velocity = _velocity;
     }
 }
